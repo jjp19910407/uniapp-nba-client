@@ -1,0 +1,28 @@
+{
+    "name": "NBA球迷社区",
+    "appid": "__UNI__NBAFANS",
+    "description": "NBA球迷社区小程序",
+    "versionName": "1.0.0",
+    "versionCode": "100",
+    "transformPx": false,
+    "uniStatistics": {
+        "enable": false
+    },
+    "mp-weixin": {
+        "appid": "wx5dec4d7d9816829c",
+        "setting": {
+            "urlCheck": false,
+            "es6": true,
+            "enhance": true,
+            "postcss": true,
+            "minified": true
+        },
+        "usingComponents": true,
+        "permission": {
+            "scope.userLocation": {
+                "desc": "获取位置信息用于展示附近球迷"
+            }
+        }
+    },
+    "vueVersion": "3"
+}
