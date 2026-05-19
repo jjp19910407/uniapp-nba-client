@@ -8,6 +8,13 @@ export default defineConfig({
       '@': '/src'
     }
   },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: `@import "uview-plus/theme.scss"; @import "uview-plus/libs/css/color.scss"; @import "uview-plus/libs/css/mixin.scss";`
+      }
+    }
+  },
   server: {
     port: 3002,
     proxy: {

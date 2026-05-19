@@ -4,6 +4,9 @@ export const authApi = {
   login(code: string) {
     return request({ url: '/auth/login', method: 'POST', data: { code } });
   },
+  refresh() {
+    return request({ url: '/auth/refresh', method: 'POST' });
+  },
   getPhone(code: string) {
     return request({ url: '/auth/phone', method: 'POST', data: { code } });
   },
@@ -13,7 +16,16 @@ export const authApi = {
 };
 
 export const userApi = {
-  initProfile(data: any) {
+  initProfile(data: {
+    avatarUrl: string;
+    nickname: string;
+    slogan: string;
+    age: number | null;
+    watchYears: number | null;
+    teamId: number;
+    teamName: string;
+    stars: { starId: number; starName: string; role: string }[];
+  }) {
     return request({ url: '/user/profile/init', method: 'POST', data });
   },
   getInfo() {

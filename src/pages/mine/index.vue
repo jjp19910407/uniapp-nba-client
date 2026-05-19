@@ -9,7 +9,7 @@
           <text class="nickname">未登录</text>
           <text class="slogan">登录后享受更多功能</text>
         </view>
-        <button class="login-btn" @click="goLogin">登录 / 注册</button>
+        <button class="login-btn" :loading="loginLoading" @click="goLogin">登录 / 注册</button>
       </view>
 
       <!-- 已登录 -->
@@ -55,21 +55,49 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useUserStore } from '@/stores/user';
-import { userApi } from '@/api';
+import { authApi, userApi } from '@/api';
 
 const userStore = useUserStore();
+const loginLoading = ref(false);
 
 onMounted(async () => {
   if (userStore.token && !userStore.userInfo) {
-    const res = await userApi.getInfo();
-    userStore.setUserInfo(res.data.userProfile, res.data.userStars);
+    try {
+      const res = await userApi.getInfo();
+      userStore.setUserInfo(res.data.userProfile, res.data.userStars);
+    } catch {
+      userStore.logout();
+    }
   }
 });
 
-const goLogin = () => {
-  uni.navigateTo({ url: '/pages/login/index' });
+// 点击登录/注册：静默 wx.login，判断是否已注册
+const goLogin = async () => {
+  if (loginLoading.value) return;
+  loginLoading.value = true;
+  try {
+    const loginRes = await new Promise<any>((resolve, reject) => {
+      wx.login({ success: resolve, fail: reject });
+    });
+
+    const res = await authApi.login(loginRes.code);
+
+    if (res.data.isNew) {
+      // 未注册，跳转注册页
+      uni.navigateTo({ url: '/pages/login/index' });
+    } else {
+      // 已注册，静默登录成功
+      userStore.setToken(res.data.token);
+      const infoRes = await userApi.getInfo();
+      userStore.setUserInfo(infoRes.data.userProfile, infoRes.data.userStars);
+    }
+  } catch {
+    uni.showToast({ title: '登录失败，请重试', icon: 'none' });
+  } finally {
+    loginLoading.value = false;
+  }
 };
 
 const goPage = (path: string) => {

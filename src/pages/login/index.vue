@@ -93,13 +93,13 @@ const handleStart = async () => {
     }
     userStore.setToken(res.data.token);
 
-    // 新用户进入资料填写，老用户直接回去
     if (res.data.isNew) {
+      // 新用户进入资料填写流程
       step.value = 'profile';
     } else {
+      // 老用户直接登录
       const infoRes = await userApi.getInfo();
       userStore.setUserInfo(infoRes.data.userProfile, infoRes.data.userStars);
-      uni.navigateBack();
     }
   } catch (e) {
     console.error('login error:', e);
@@ -146,9 +146,6 @@ const submitProfile = async (phone: string | null) => {
     });
     const infoRes = await userApi.getInfo();
     userStore.setUserInfo(infoRes.data.userProfile, infoRes.data.userStars);
-
-    // 注册成功后跳转到资料完善页面
-    uni.redirectTo({ url: '/pages/profile-init/index' });
   } catch (e) {
     console.error('initProfile error:', e);
     uni.showToast({ title: '注册失败，请重试', icon: 'none' });
